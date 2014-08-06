@@ -85,7 +85,7 @@ To run the script::
 
     python fetch_genomes.py interesting-genomes.txt genbank-files
 
-Note::
+.. Note::
     
     You may want to run this on just a few of these IDs to begin with.  You can create a smaller list using the *head* command with the -n parameter in the shell.  For example, head -n 3 interesting-genomes.txt > 3genomes.txt.
  
