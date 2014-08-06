@@ -9,7 +9,7 @@ if len(sys.argv) != 3:
     print "USAGE: fetch_genome_xml.py <genome_id_list> <out_dir>"
     sys.exit(1)
 
-url_template = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=%s&retmode=xml"
+url_template = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=%s&rettype=gb&retmode=text"
 
 for id in open(sys.argv[1]):
     id = id.strip()
