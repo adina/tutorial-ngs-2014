@@ -13,7 +13,7 @@ Some examples
 You read a paper, and the authors reference MG-RAST metagenomes.  You want to download these so you can reproduce some of the analysis and ask some of your own questions. 
 
 .. image:: fierer_pnas_s2.png
-    :scale: 50%
+    :scale: 100%
     :height: 100px
     :width: 200px
     :align: center
@@ -123,14 +123,88 @@ Or functional information in the SEED::
     One of the things you'll notice when you run these commands in the command line with *curl* is that the output is pretty ugly.  You'll want to parse these outputs in a programming language you know and look for a JSON parser.  I'm most familiar with Python's library `json <https://docs.python.org/2/library/json.html>`_, which can import JSON text into Python libraries easily.  
 I generally use these downloads to link to my annotations.  For example, I'd get the SSID that a sequence might be associated with in a BLAT table download and then link it to the database ontology with a m5nr download call.  
 
-One of the most aggravating searches in MG-RAST is linking taxonomy to an md5sum.  But...once you do it, you can give yourself a huge pat on the back for understanding how to interact with this API.
+A note on JSON
+--------------
+
+You might be wondering how to work with these JSON outputs in your own scripting.  For example, for this call::
+
+    curl http://api.metagenomics.anl.gov//m5nr/md5/000821a2e2f63df1a3873e4b280002a8?version=10
+
+The output of the raw JSON looks like this::
+
+.. image:: api_call_exam.png
+    :scale: 100%
+    :height: 100px
+    :width: 200px
+    :align: center
+
+If you look closely, it looks a lot like a Python *dictionary* structure and that's how most folks interact with it.  Since I program mainly in Python, I use its JSON libraries to work with these outputs in my scripting.  I installed the library `ijson <https://pypi.python.org/pypi/ijson/>`_.  In your home directory on your instance, install the library::
+
+    curl https://pypi.python.org/packages/source/i/ijson/ijson-1.1.tar.gz
+    tar -zxvf ijson-1.1.tar.gz
+    cd ijson-1.1
+    python setup.py install
+
+You can test that it was installed::
+
+    python
+    >>import ijson
+    >>
+
+No error message means you're good to go.
+
+To work with this data structure, I'd look at it first in your pretty JSON-printed webbrowser.
+
+You'll notice that the data is broken down into a set of nested objects.  In this example, the first level contains objects like the version, url, and data.  If you go into the data object, you'll see nested data about source, function, type, ncbi_tax_id, etc.
+
+I access the specific object "data" in Python with the following code::
+
+    import urllib
+    import ijson
+
+    url_string = "http://api.metagenomics.anl.gov//m5nr/md5/000821a2e2f63df1a3873e4b280002a8?version=10"
+
+    f = urllib.urlopen(url_string)
+
+    objects = ijson.items(f, '')
+    for item in objects:
+        for x in item["data"]:
+            print x["function"], x["ncbi_tax_id"], x["organism"], x["source"], x["type"], x["md5"]
+
+Now, if I had a much larger object, say the one below, I'd save it to a file first::
+
+    curl http://api.metagenomics.anl.gov/1/m5nr/taxonomy?version=1 > taxonomy_download.json
+
+Then, I would parse through the file::
+
+    import urllib
+    import ijson
+    import sys
+
+    f = open(sys.argv[1])
+    objects = ijson.items(f, '')
+ 
+    for item in objects:
+        for x in item["data"]:
+            if x.has_key("domain"):
+                print x["domain"], x["ncbi_tax_id"]
+                #note that not all tax_id's have an associated domain
+
 
 Exercise
 --------
+One of the most aggravating searches in MG-RAST is linking a md5sum to its taxonomy.  But...once you do it, you can give yourself a huge pat on the back for understanding how to interact with this API.
+
 Can you figure out how to do it?  For a given md5sum, identify its taxonomic lineage.  What if you had to automate this for several md5sums?  
 
-#. Download the BLAT tabular output for mgm4447943.3 (Hint the file type is 650.2)  
-#. Identify the best hits for the first 50 reads. (Hint, remember your BLAST tutorial?)
-#. Find the taxonomy id associated with the first 50 reads using the API call.
+#. Download the BLAT tabular output for mgm4447943.3 (Hint: the file type is 650.2)  
+#. Identify the best hits for the first 50 reads. (Hint: remember your BLAST tutorial?)
+#. Find the taxonomy id associated with the first 50 reads using the API call.  (Hint: you're going to want to write your own script for interacting with the following string "http://api.metagenomics.anl.gov//m5nr/md5/" + m5nr + "?source=GenBank") 
+#. Find the taxonomy lineage associated with that taxon ID.  
 
+.. Note::
+
+You can also get taxonomy from NCBI returned in XML format::
+
+    http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=376637
 
