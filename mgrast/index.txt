@@ -1,3 +1,4 @@
+===================
 MG-RAST and its API
 ===================
 
@@ -7,7 +8,7 @@ Another way you could work with MG-RAST is to download the entire database and t
 
 The best way to access MG-RAST data in my experience is to learn to use their API.  MG-RAST has done a decent job publishing `API documentation <http://api.metagenomics.anl.gov/>`_ -- it just takes a bit of practice to understand its structure.  
 
-Some examples
+Example Usage
 -------------
 
 You read a paper, and the authors reference MG-RAST metagenomes.  You want to download these so you can reproduce some of the analysis and ask some of your own questions. 
@@ -58,14 +59,17 @@ A challenge for MG-RAST is that the types of files and the stages aren't that we
 
 A few words on the MG-RAST database.  This often confuses people about MG-RAST.  The central part of the MG-RAST database is a set of known protein sequences.  These known sequences are identified by a unique ID (a mix of numbers and letters).  Each known sequence is then related to a known annotation in several databases (e.g., RefSeq, KEGG, SEED, etc.).  In other words, the search of your sequences to the database involves a sequence comparison to a sequences in the M5nr sequence database and these sequences are then linked to "a hub" of annotations in several databases.  If MG-RAST wants to add another database to its capabilities, it would identify the IDs of sequences related to the sequences in the database.  If it existed, the new database annotation would be added to the hub.  Otherwise, a new ID would be created and also a new annotation hub.  As a consequence of all this, the main thing I work with in MG-RAST is these unique IDs.
  
-Exercise
---------
+Exercise - Download
+-------------------
 
 Try downloading a few metagenomes from the PNAS paper and associated files.  Can you think of how to automate doing this?
 
 MG-RAST annotates sequences and can estimate the abundance of taxonomy and function.  Uses structures of databases like SEED, you can thus find broad functional summaries, e.g., the amount of carbon metabolism in various metagenomes.  
 
 I work mostly with assemblies, as most of my unassembled are less than 200 bp.  In general, I'm also paranoid and like to do any sort of abundance counting on my own.  Let me give you an example, if one of my sequences hits two sequences in the MG-RAST database with identical scores, what should one do in the abundance accounting?  
+
+Working with Annotations
+------------------------
 
 Honestly, I'm never sure what MG-RAST is doing, so I like to be in charge of those decisions.  Most typically, I am working with 3 types of datasets in any sort of experimental analysis:  
 
@@ -187,8 +191,8 @@ Then, I would parse through the file::
                 #note that not all tax_id's have an associated domain
 
 
-Exercise
---------
+Exercise - linking MG-RAST to taxonomy
+--------------------------------------
 One of the most aggravating searches in MG-RAST is linking a md5sum to its taxonomy.  But...once you do it, you can give yourself a huge pat on the back for understanding how to interact with this API.
 
 Can you figure out how to do it?  For a given md5sum, identify its taxonomic lineage.  What if you had to automate this for several md5sums?  

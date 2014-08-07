@@ -1,6 +1,6 @@
-========================================
-So you want to get some sequencing data?
-========================================
+================================================
+So you want to get some sequencing data in NCBI?
+================================================
 
 This is a set of tutorials for working with the NCBI and MG-RAST databases -- s\
 pecifically, to download project specific information.
@@ -13,7 +13,7 @@ tabase, hosted by the `NCBI <http://www.ncbi.nlm.nih.gov/>`_.
 Let's come up with a list of things we'd like stored in	this database and discuss some	of the challenges involved in database creation, management, and access.
 
 The challenge
-=============
+-------------
 So, you've been	given a	list of	genomes	and been asked to create a phylogenetic tree of these genomes.	 How big would this list be before you thought about hiring an undergraduate to download sequences?
 
 Say the list is only 3 genomes::
@@ -63,6 +63,9 @@ Also, a useful command is also <version=1>.  There are different versions of seq
 
    Notice the "&" that comes between each of these little commands, it is necessary and important.   
 
+Automating with an API
+----------------------
+
 Ok, let's think of automating this sort of query.  
 
 In the shell, you could run the same commands above with the addition of *curl* on your EC2 instance::
@@ -95,15 +98,17 @@ Let's take a look inside this script.  The meat of this script uses the followin
 
 You'll see that the *id* here is a string character which is obtained from list of IDs contained in a separate file.  The rest of the script manages where the files are being placed and what they are named.  It also prints some output to the screen so you know its running.
 
-Exercise::
+Exercise - Downloading data
+---------------------------
 
-    Try modifying this script to download just the FASTA sequences of the genes.
+Try modifying the fetch_genomes.py script to download just the FASTA sequences of the genes.
 
 Running this script should allow you to download genomes to your heart's content.  But how do you grab specific genes from this data then?  Specifically, the challenge was to make a phylogenetic tree of sequences, so let's target the conserved bacterial gene, *16S ribosomal RNA gene*.
 
+Comment on Genbank files
+------------------------
+
 Genbank files have a special structure to them.  You can look at it and figure it out for the most part, or read about it in detail `here <http://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html>`_.  To find out if your downloaded Genbank files contain 16S rRNA genes, I like to run the following command::
-
-
 
     grep 16S *gbk
 
