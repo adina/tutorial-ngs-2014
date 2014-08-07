@@ -14,8 +14,6 @@ You read a paper, and the authors reference MG-RAST metagenomes.  You want to do
 
 .. image:: fierer_pnas_s2.png
     :scale: 100%
-    :height: 100px
-    :width: 200px
     :align: center
 
 For example, here is some data from a recent PNAS paper, "Cross-biome metagenomic analyses of soil microbial communities and their functional attributes"
@@ -130,12 +128,10 @@ You might be wondering how to work with these JSON outputs in your own scripting
 
     curl http://api.metagenomics.anl.gov//m5nr/md5/000821a2e2f63df1a3873e4b280002a8?version=10
 
-The output of the raw JSON looks like this::
+The output of the raw JSON looks like this:
 
 .. image:: api_call_exam.png
     :scale: 100%
-    :height: 100px
-    :width: 200px
     :align: center
 
 If you look closely, it looks a lot like a Python *dictionary* structure and that's how most folks interact with it.  Since I program mainly in Python, I use its JSON libraries to work with these outputs in my scripting.  I installed the library `ijson <https://pypi.python.org/pypi/ijson/>`_.  In your home directory on your instance, install the library::
