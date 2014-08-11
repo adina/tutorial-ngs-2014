@@ -1,0 +1,230 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>So you want to get some sequencing data in NCBI? &mdash; NGS 2014 Tutorial - Databases 0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="NGS 2014 Tutorial - Databases 0.0 documentation" href="../index.html" />
+    <link rel="next" title="MG-RAST and its API" href="../mgrast/index.html" />
+    <link rel="prev" title="Welcome to NGS 2014 Tutorial - Databases’s documentation!" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../mgrast/index.html" title="MG-RAST and its API"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to NGS 2014 Tutorial - Databases’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">NGS 2014 Tutorial - Databases 0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="so-you-want-to-get-some-sequencing-data-in-ncbi">
+<h1>So you want to get some sequencing data in NCBI?<a class="headerlink" href="#so-you-want-to-get-some-sequencing-data-in-ncbi" title="Permalink to this headline">¶</a></h1>
+<p>This is a set of tutorials for working with the NCBI and MG-RAST databases &#8211; specifically, to download project specific information.</p>
+<p>First, let&#8217;s think about how these databases are structured.  I am going to create a database for folks to deposit whole genome sequences.  What kind of information am I going to store in this?  Many of you may be familiar with such a database, hosted by the <a class="reference external" href="http://www.ncbi.nlm.nih.gov/">NCBI</a>.</p>
+<p>Let&#8217;s come up with a list of things we&#8217;d like stored in this database and discuss some  of the challenges involved in database creation, management, and access.</p>
+<div class="section" id="the-challenge">
+<h2>The challenge<a class="headerlink" href="#the-challenge" title="Permalink to this headline">¶</a></h2>
+<p>So, you&#8217;ve been given a list of genomes and been asked to create a phylogenetic tree of these genomes.   How big would this list be before you thought about hiring an undergraduate to download sequences?</p>
+<p>Say the list is only 3 genomes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">CP000962</span>
+<span class="n">CP000967</span>
+<span class="n">CP000975</span>
+</pre></div>
+</div>
+<p>The following are some ways with which I&#8217;ve used to grab genome sequences:</p>
+<ol class="arabic simple">
+<li>Go to the web portal and look up each FASTA</li>
+<li>Go to the <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/refseq/">FTP site</a>, find each genome, and download manually</li>
+<li>Use the NCBI Web Services API to download the data</li>
+</ol>
+<p>Among these, I&#8217;m going to assume many of you are familiar with the first two.  This tutorial then is going to focus on using APIs.</p>
+</div>
+<div class="section" id="what-is-an-api-and-how-does-it-relate-to-ncbi">
+<h2>What is an API and how does it relate to NCBI?<a class="headerlink" href="#what-is-an-api-and-how-does-it-relate-to-ncbi" title="Permalink to this headline">¶</a></h2>
+<p>Here&#8217;s some <a class="reference external" href="http://stackoverflow.com/questions/7440379/what-exactly-is-the-meaning-of-an-api">answers</a>, among which my favorite is &#8220;an interface through which you access someone else&#8217;s code or through which someone else&#8217;s code accesses yours &#8211; in effect the public methods and properties.&#8221;</p>
+<p>The NCBI has a whole toolkit which they call <em>Entrez Programming Utilities</em> or <em>eutils</em> for short.  You can read all about it in the <a class="reference external" href="http://www.ncbi.nlm.nih.gov/books/NBK25501/">documentation</a>.  There are a lot of things you can do to interface with all things NCBI, including publications, etc., but I am going to focus today on downloading sequencing data.</p>
+<p>To do this, you&#8217;re going to be using one tool in <em>eutils</em>, called <em>efetch</em>.  There is a whole chapter devoted to <a class="reference external" href="http://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.EFetch">efetch</a> &#8211; when I first started doing this kind of work, this documentation always broke my heart.  Its easier for me to just show you how to use it.</p>
+<p>Open a web browser, and try the following URL to download the nucleotide genome for CB00962:</p>
+<div class="highlight-python"><pre>http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&amp;id=CP000962&amp;rettype=fasta&amp;retmode=text</pre>
+</div>
+<p>Note that the NCBI knows a lot about this genome.  Check it out <a class="reference external" href="http://www.ncbi.nlm.nih.gov/nuccore/CP000962">here</a>.</p>
+<p>If I want to access other kinds of data associated with this genome, I would try the following command:</p>
+<div class="highlight-python"><pre>http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&amp;id=CP000962&amp;rettype=gb&amp;retmode=text</pre>
+</div>
+<p>Do you notice the difference in these two commands?  Let&#8217;s breakdown the command here:</p>
+<ol class="arabic simple">
+<li>&lt;<a class="reference external" href="http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi">http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi</a>?&gt;  This is command telling your computer program (or your browser) to talk to the NCBI API tool efetch.</li>
+<li>&lt;db=nuccore&gt;  This command tells the NCBI API that you&#8217;d like it to look in this particular database for some data.  Other databases that the NCBI has available can be found <a class="reference external" href="http://eutils.ncbi.nlm.nih.gov/entrez/eutils/einfo.fcgi">here</a>.</li>
+<li>&lt;id=CP000962&gt;  This command tells the NCBI API efetch the ID of the genome you want to find.</li>
+<li>&lt;rettype=gb&amp;retmode=text&gt;  These two commands tells the NCBI how the data is returned.  You&#8217;ll note that in the two examples above this command varied slightly.  In the first, we asked for only the FASTA sequence, while in the second, we asked for the Genbank file.  Here&#8217;s some elusive documentation on where to find these <a class="reference external" href="http://www.ncbi.nlm.nih.gov/books/NBK25499/table/chapter4.chapter4_table1/?report=objectonly">&#8220;return&#8221; objects</a>.</li>
+</ol>
+<p>Also, a useful command is also &lt;version=1&gt;.  There are different versions of sequences and some times that is useful.  For reproducibility, I try to specify versions in my queries, see these <a class="reference external" href="http://www.ncbi.nlm.nih.gov/Class/MLACourse/Modules/Format/exercises/qa_accession_vs_gi.html">comments</a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Notice the &#8220;&amp;&#8221; that comes between each of these little commands, it is necessary and important.</p>
+</div>
+</div>
+<div class="section" id="automating-with-an-api">
+<h2>Automating with an API<a class="headerlink" href="#automating-with-an-api" title="Permalink to this headline">¶</a></h2>
+<p>Ok, let&#8217;s think of automating this sort of query.</p>
+<p>In the shell, you could run the same commands above with the addition of <em>curl</em> on your EC2 instance:</p>
+<div class="highlight-python"><pre>curl "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&amp;id=CP000962&amp;rettype=fasta&amp;retmode=text"</pre>
+</div>
+<p>You&#8217;ll see it fly on to your screen.  Don&#8217;t panic - you can save it to a file and make it more useful.:</p>
+<div class="highlight-python"><pre>curl "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&amp;id=CP000962&amp;rettype=fasta&amp;retmode=text &gt; CP000962.fa"</pre>
+</div>
+<p>You could now imagine writing a program where you made a list of IDs you want to download and put it in a for loop, <em>curling</em> each genome and saving it to a file.  The following is a <a class="reference external" href="https://github.com/adina/tutorial-ngs-2014/blob/master/ncbi/fetch-genomes.py">script</a>.  Thanks to Jordan Fish who gave me the original version of this script before I even knew how and made it easy to use.</p>
+<p>To see the documentation for this script:</p>
+<div class="highlight-python"><pre>python fetch_genomes.py</pre>
+</div>
+<p>You&#8217;ll see that you need to provide a list of IDs and a directory where you want to save the downloaded files.</p>
+<p>To run the script:</p>
+<div class="highlight-python"><pre>python fetch_genomes.py interesting-genomes.txt genbank-files</pre>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You may want to run this on just a few of these IDs to begin with.  You can create a smaller list using the <em>head</em> command with the -n parameter in the shell.  For example, head -n 3 interesting-genomes.txt &gt; 3genomes.txt.</p>
+</div>
+<p>Let&#8217;s take a look inside this script.  The meat of this script uses the following code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">url_template</span> <span class="o">=</span> <span class="s">&quot;http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&amp;id=</span><span class="si">%s</span><span class="s">&amp;rettype=gb&amp;retmode=text&quot;</span>
+</pre></div>
+</div>
+<p>You&#8217;ll see that the <em>id</em> here is a string character which is obtained from list of IDs contained in a separate file.  The rest of the script manages where the files are being placed and what they are named.  It also prints some output to the screen so you know its running.</p>
+</div>
+<div class="section" id="exercise-downloading-data">
+<h2>Exercise - Downloading data<a class="headerlink" href="#exercise-downloading-data" title="Permalink to this headline">¶</a></h2>
+<p>Try modifying the fetch_genomes.py script to download just the FASTA sequences of the genes.</p>
+<p>Running this script should allow you to download genomes to your heart&#8217;s content.  But how do you grab specific genes from this data then?  Specifically, the challenge was to make a phylogenetic tree of sequences, so let&#8217;s target the conserved bacterial gene, <em>16S ribosomal RNA gene</em>.</p>
+</div>
+<div class="section" id="comment-on-genbank-files">
+<h2>Comment on Genbank files<a class="headerlink" href="#comment-on-genbank-files" title="Permalink to this headline">¶</a></h2>
+<p>Genbank files have a special structure to them.  You can look at it and figure it out for the most part, or read about it in detail <a class="reference external" href="http://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html">here</a>.  To find out if your downloaded Genbank files contain 16S rRNA genes, I like to run the following command:</p>
+<div class="highlight-python"><pre>grep 16S *gbk</pre>
+</div>
+<p>This should look somewhat familiar from your shell lesson, but basically we&#8217;re looking for anylines that contain the character &#8220;16S&#8221; in any Genbank file we&#8217;ve downloaded.  Note that you&#8217;ll have to run this in the directory where you downloaded these files.</p>
+<p>The structure of the Genbank file allows you to identify 16S genes.  For example,</p>
+<div class="highlight-python"><pre>rRNA        9258..10759
+            /gene="rrs"
+            /locus_tag="CLK_3816"
+            /product="16S ribosomal RNA"
+            /db_xref="Pathema:CLK_3816"</pre>
+</div>
+<p>You could write code to find text like &#8216;rRNA&#8217; and &#8216;/product=&#8221;16S ribosomal RNA&#8221;&#8217;, grab the location of the gene, and then go to the FASTA file and grab these sequences.  I&#8217;ve done that before.</p>
+<p>You could also use existing packages to parse Genbank files.  I have the most experience with BioPython.  To begin with, let&#8217;s just use BioPython so you can get to using existing scripts without writing scripts.</p>
+<p>First, we&#8217;ll have to install BioPython on your instance and they&#8217;ve made that pretty easy:</p>
+<div class="highlight-python"><pre>apt-get install python-biopython</pre>
+</div>
+<p>Fan Yang (Iowa State University) and I wrote a script to extract 16S rRNA sequences from Genbank files, <a class="reference external" href="https://github.com/adina/tutorial-ngs-2014/blob/master/ncbi/parse-genbank.py">here</a>.  It basically searches for text strings in the Genbank structure that is appropriate for these particular genes.  You can read more about BioPython <a class="reference external" href="http://biopython.org/DIST/docs/tutorial/Tutorial.html">here</a> and its Genbank parser <a class="reference external" href="http://biopython.org/DIST/docs/api/Bio.GenBank-module.html">here</a>.</p>
+<p>To run this script on the Genbank file for CP000962:</p>
+<div class="highlight-python"><pre>python parse-genbank.py genbank-files/CP000962.gbk &gt; genbank-files/CP000962.gbk.16S.fa</pre>
+</div>
+<p>The resulting output file contains all 16S rRNA genes from the given Genbank file.</p>
+<p>To run this for multiple files, I use a shell for loop:</p>
+<div class="highlight-python"><pre>for x in genbank-files/*; do python parse-genbank.py $x &gt; $x.16S.fa; done</pre>
+</div>
+<p>There are multiple ways to get this done &#8211; but this is how I like to do it.</p>
+<p>And there you have it, you can now pretty much automatically grab 16S rRNA genes from any number of genomes in NCBI databases.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">So you want to get some sequencing data in NCBI?</a><ul>
+<li><a class="reference internal" href="#the-challenge">The challenge</a></li>
+<li><a class="reference internal" href="#what-is-an-api-and-how-does-it-relate-to-ncbi">What is an API and how does it relate to NCBI?</a></li>
+<li><a class="reference internal" href="#automating-with-an-api">Automating with an API</a></li>
+<li><a class="reference internal" href="#exercise-downloading-data">Exercise - Downloading data</a></li>
+<li><a class="reference internal" href="#comment-on-genbank-files">Comment on Genbank files</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Welcome to NGS 2014 Tutorial - Databases&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../mgrast/index.html"
+                        title="next chapter">MG-RAST and its API</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/ncbi/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../mgrast/index.html" title="MG-RAST and its API"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to NGS 2014 Tutorial - Databases’s documentation!"
+             >previous</a> |</li>
+        <li><a href="../index.html">NGS 2014 Tutorial - Databases 0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adina Howe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

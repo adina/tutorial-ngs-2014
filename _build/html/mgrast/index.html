@@ -1,0 +1,273 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MG-RAST and its API &mdash; NGS 2014 Tutorial - Databases 0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="NGS 2014 Tutorial - Databases 0.0 documentation" href="../index.html" />
+    <link rel="prev" title="So you want to get some sequencing data in NCBI?" href="../ncbi/index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../ncbi/index.html" title="So you want to get some sequencing data in NCBI?"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">NGS 2014 Tutorial - Databases 0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mg-rast-and-its-api">
+<h1>MG-RAST and its API<a class="headerlink" href="#mg-rast-and-its-api" title="Permalink to this headline">¶</a></h1>
+<p>Just like the NCBI databases, there are many ways you can interact with MG-RAST, and the web interface is possibly the <em>worst</em> way.</p>
+<p>Another way you could work with MG-RAST is to download the entire database and then write parsers to get what you want out of it.  I&#8217;ve also found this incredibly painful but if you want to do that, you can find its database <a class="reference external" href="ftp://ftp.metagenomics.anl.gov/data/M5nr/">here</a>.</p>
+<p>The best way to access MG-RAST data in my experience is to learn to use their API.  MG-RAST has done a decent job publishing <a class="reference external" href="http://api.metagenomics.anl.gov/">API documentation</a> &#8211; it just takes a bit of practice to understand its structure.</p>
+<div class="section" id="example-usage">
+<h2>Example Usage<a class="headerlink" href="#example-usage" title="Permalink to this headline">¶</a></h2>
+<p>You read a paper, and the authors reference MG-RAST metagenomes.  You want to download these so you can reproduce some of the analysis and ask some of your own questions.</p>
+<a class="reference internal image-reference" href="../_images/fierer_pnas_s2.png"><img alt="../_images/fierer_pnas_s2.png" class="align-center" src="../_images/fierer_pnas_s2.png" style="width: 1065.0px; height: 535.0px;" /></a>
+<p>For example, here is some data from a recent PNAS paper, &#8220;Cross-biome metagenomic analyses of soil microbial communities and their functional attributes&#8221;</p>
+<p>If we wanted to download this data with the API, I&#8217;d look at the documentation <em>download</em>, <a class="reference external" href="http://api.metagenomics.anl.gov/api.html#download">here</a>.  You&#8217;ll see a couple examples that lists how you would download different stages:</p>
+<div class="highlight-python"><pre>http://api.metagenomics.anl.gov/1/download/mgm4447943.3?file=350.1</pre>
+</div>
+<p>Or...:</p>
+<div class="highlight-python"><pre>http://api.metagenomics.anl.gov/1/download/mgm4447943.3?stage=650</pre>
+</div>
+<p>These two commands above download a specific file or show files from a specific stage for the MG-RAST metagenome ID 4447943.3.   You&#8217;ll notice how they look similar to the NCBI API calls, with a specific structure.  You&#8217;re also requesting specific data with the query terms given after the ID with this <em>&amp;</em> structure.   Try putting these <em>urls</em> into your web browser and you can see the results.</p>
+<p>Remember that you can also access the same commands on the shell with the <em>curl</em> command, but you need to know what kind of output you expect.</p>
+<p>This command outputs a file so you need to save the file to an output:</p>
+<blockquote>
+<div>curl &#8220;<a class="reference external" href="http://api.metagenomics.anl.gov/1/download/mgm4447943.3?file=350.1">http://api.metagenomics.anl.gov/1/download/mgm4447943.3?file=350.1</a>&#8221; &gt; 350.1.fastq.gz</div></blockquote>
+<p>This command returns text (in JSON structure):</p>
+<blockquote>
+<div>curl &#8220;<a class="reference external" href="http://api.metagenomics.anl.gov/1/download/mgm4447943.3?stage=650">http://api.metagenomics.anl.gov/1/download/mgm4447943.3?stage=650</a>&#8220;</div></blockquote>
+<p>As a beginner, I often didn&#8217;t know what to expect and would just try things out &#8211; which I recommend as a good way to learn.</p>
+<p>Even more useful, I think is the following command:</p>
+<blockquote>
+<div><a class="reference external" href="http://api.metagenomics.anl.gov/1/download/mgm4447943.3">http://api.metagenomics.anl.gov/1/download/mgm4447943.3</a></div></blockquote>
+<p>I like to put this in a web browser because it pretty prints the JSON text output.  This command above gives all the dat that can be obtained from the <em>download</em> call for this metagenome.</p>
+<p>A challenge for MG-RAST is that the types of files and the stages aren&#8217;t that well-documented.  You can get a good guess of what the files and their content from the download page on the web interface, e.g., <a class="reference external" href="http://metagenomics.anl.gov/metagenomics.cgi?page=DownloadMetagenome&amp;metagenome=4447943.3">here</a>.  I can tell you from experience that the most important files for me are as follows:</p>
+<ol class="arabic simple">
+<li>File 050.2 - This is the unfiltered metagenome that was originally uploaded to MG-RAST</li>
+<li>File 350.2 &amp; 350.3 - These are the protein coding genes (amino acids and nucleotides)</li>
+<li>File 440.1 - These are predicted rRNA sequences (I do not recommend using MG-RAST for sensitive rRNA annotation.  It does not use the internal structure of the gene, which other programs appropriately use for classification)</li>
+<li>File 550.1 - This file shows clustered sequences which are 90% identical, to reduce the number of sequences that need to be annotated.  Many folks don&#8217;t even know that this happens within MG-RAST.</li>
+<li>File 650.1 &amp; 650.2 - These files are essentially the blat tabular output from comparing your sequence to the database.</li>
+</ol>
+<p>A few words on the MG-RAST database.  This often confuses people about MG-RAST.  The central part of the MG-RAST database is a set of known protein sequences.  These known sequences are identified by a unique ID (a mix of numbers and letters).  Each known sequence is then related to a known annotation in several databases (e.g., RefSeq, KEGG, SEED, etc.).  In other words, the search of your sequences to the database involves a sequence comparison to a sequences in the M5nr sequence database and these sequences are then linked to &#8220;a hub&#8221; of annotations in several databases.  If MG-RAST wants to add another database to its capabilities, it would identify the IDs of sequences related to the sequences in the database.  If it existed, the new database annotation would be added to the hub.  Otherwise, a new ID would be created and also a new annotation hub.  As a consequence of all this, the main thing I work with in MG-RAST is these unique IDs.</p>
+</div>
+<div class="section" id="exercise-download">
+<h2>Exercise - Download<a class="headerlink" href="#exercise-download" title="Permalink to this headline">¶</a></h2>
+<p>Try downloading a few metagenomes from the PNAS paper and associated files.  Can you think of how to automate doing this?</p>
+<p>MG-RAST annotates sequences and can estimate the abundance of taxonomy and function.  Uses structures of databases like SEED, you can thus find broad functional summaries, e.g., the amount of carbon metabolism in various metagenomes.</p>
+<p>I work mostly with assemblies, as most of my unassembled are less than 200 bp.  In general, I&#8217;m also paranoid and like to do any sort of abundance counting on my own.  Let me give you an example, if one of my sequences hits two sequences in the MG-RAST database with identical scores, what should one do in the abundance accounting?</p>
+</div>
+<div class="section" id="working-with-annotations">
+<h2>Working with Annotations<a class="headerlink" href="#working-with-annotations" title="Permalink to this headline">¶</a></h2>
+<p>Honestly, I&#8217;m never sure what MG-RAST is doing, so I like to be in charge of those decisions.  Most typically, I am working with 3 types of datasets in any sort of experimental analysis:</p>
+<ol class="arabic simple">
+<li>an annotation file linking my sequence to a database (hopefully one with some structure like SEED),</li>
+<li>an abundance file (giving estimates of each of my sequences in my database), and</li>
+<li>some sort of metadata describing my experiment and samples.</li>
+</ol>
+<p>MG-RAST can provide you with all three of these, but I typically use it only for #1.  This does require a good deal of know-how in scripting land.</p>
+<p>To download these annotation files for specific databases (rather than the unique MG-RAST ID), I use the API <a class="reference external" href="http://api.metagenomics.anl.gov/api.html#annotation">annotation command</a>.   Using the API, I&#8217;ll select the database I&#8217;d like to use and the type of data within that database I would like returned (e.g., function, taxonomy, or unique ID &#8211; aka md5sum).</p>
+<p>There are a couple examples on the documentation that are worth trying:</p>
+<div class="highlight-python"><pre>http://api.metagenomics.anl.gov/1/annotation/sequence/mgm4447943.3?evalue=10&amp;type=organism&amp;source=SwissProt</pre>
+</div>
+<p>The above returns a sequence FASTA file with the annotation included in the header of each sequence.:</p>
+<div class="highlight-python"><pre>http://api.metagenomics.anl.gov/1/annotation/similarity/mgm4447943.3?identity=80&amp;type=function&amp;source=KO</pre>
+</div>
+<p>I use this more often.  The above returns the BLAT results in a tabular format, including the annotations in the last column.  Note that with the <em>curl</em> command I can save this to a file and then parse it on my own.</p>
+<p>Some comments on the parameters within <em>type</em> within these API calls:</p>
+<ol class="arabic simple">
+<li>Organism and function are self-explanatory.</li>
+<li>Ontology is the &#8220;structure&#8221; of the database, e.g., Subsystems groups SEED sequences into broader functional groups which have their own unique IDS like SS0001.</li>
+<li>Feature - This is the most basic ID within the database of choice, e.g., in RefSeq, this would be its accession ID.</li>
+<li>MD5 - this is the unique ID within MG-RAST.</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The other good parameter to be aware of is <em>version</em>.  This is important to keep all your analysis consistent.  And also guarantees that you are working with the most recent database.  Also, when you have to go back and repeat the analysis, you&#8217;ll know what version you used.  The problem is that MG-RAST has almost <em>no</em> documentation on versions right now.  You should write them and complain.</p>
+</div>
+<p>If you do want to download aspects of the database for your analysis, you&#8217;ll want to explore the documentation for <a class="reference external" href="http://api.metagenomics.anl.gov/api.html#m5nr">m5nr API calls</a>.  With these calls, you can download the various databases you interact with and more importantly, the <em>ontology</em> structure of databases.</p>
+<p>For example, you can see the information for any md5 ID in RefSeq:</p>
+<div class="highlight-python"><pre>http://api.metagenomics.anl.gov//m5nr/md5/000821a2e2f63df1a3873e4b280002a8?source=RefSeq&amp;version=10</pre>
+</div>
+<p>Or in all MG-RAST databases:</p>
+<div class="highlight-python"><pre>http://api.metagenomics.anl.gov//m5nr/md5/000821a2e2f63df1a3873e4b280002a8?version=10</pre>
+</div>
+<p>If you want to download taxonomy information:</p>
+<div class="highlight-python"><pre>http://api.metagenomics.anl.gov/1/m5nr/taxonomy?version=1</pre>
+</div>
+<p>Or functional information in the SEED:</p>
+<div class="highlight-python"><pre>http://api.metagenomics.anl.gov/1/m5nr/ontology?source=Subsystems&amp;min_level=function</pre>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">One of the things you&#8217;ll notice when you run these commands in the command line with <em>curl</em> is that the output is pretty ugly.  You&#8217;ll want to parse these outputs in a programming language you know and look for a JSON parser.  I&#8217;m most familiar with Python&#8217;s library <a class="reference external" href="https://docs.python.org/2/library/json.html">json</a>, which can import JSON text into Python libraries easily.</p>
+</div>
+<p>I generally use these downloads to link to my annotations.  For example, I&#8217;d get the SSID that a sequence might be associated with in a BLAT table download and then link it to the database ontology with a m5nr download call.</p>
+</div>
+<div class="section" id="a-note-on-json">
+<h2>A note on JSON<a class="headerlink" href="#a-note-on-json" title="Permalink to this headline">¶</a></h2>
+<p>You might be wondering how to work with these JSON outputs in your own scripting.  For example, for this call:</p>
+<div class="highlight-python"><pre>curl http://api.metagenomics.anl.gov//m5nr/md5/000821a2e2f63df1a3873e4b280002a8?version=10</pre>
+</div>
+<p>The output of the raw JSON looks like this:</p>
+<a class="reference internal image-reference" href="../_images/api_call_exam.png"><img alt="../_images/api_call_exam.png" class="align-center" src="../_images/api_call_exam.png" style="width: 952.0px; height: 565.0px;" /></a>
+<p>If you look closely, it looks a lot like a Python <em>dictionary</em> structure and that&#8217;s how most folks interact with it.  Since I program mainly in Python, I use its JSON libraries to work with these outputs in my scripting.  I installed the library <a class="reference external" href="https://pypi.python.org/pypi/ijson/">ijson</a>.  In your home directory on your instance, install the library:</p>
+<div class="highlight-python"><pre>curl https://pypi.python.org/packages/source/i/ijson/ijson-1.1.tar.gz
+tar -zxvf ijson-1.1.tar.gz
+cd ijson-1.1
+python setup.py install</pre>
+</div>
+<p>You can test that it was installed:</p>
+<div class="highlight-python"><pre>python
+&gt;&gt;import ijson
+&gt;&gt;</pre>
+</div>
+<p>No error message means you&#8217;re good to go.</p>
+<p>To work with this data structure, I&#8217;d look at it first in your pretty JSON-printed webbrowser.</p>
+<p>You&#8217;ll notice that the data is broken down into a set of nested objects.  In this example, the first level contains objects like the version, url, and data.  If you go into the data object, you&#8217;ll see nested data about source, function, type, ncbi_tax_id, etc.</p>
+<p>I access the specific object &#8220;data&#8221; in Python with the following code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">import</span> <span class="nn">ijson</span>
+
+<span class="n">url_string</span> <span class="o">=</span> <span class="s">&quot;http://api.metagenomics.anl.gov//m5nr/md5/000821a2e2f63df1a3873e4b280002a8?version=10&quot;</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url_string</span><span class="p">)</span>
+
+<span class="n">objects</span> <span class="o">=</span> <span class="n">ijson</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">]:</span>
+        <span class="k">print</span> <span class="n">x</span><span class="p">[</span><span class="s">&quot;function&quot;</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="s">&quot;ncbi_tax_id&quot;</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="s">&quot;organism&quot;</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="s">&quot;source&quot;</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="s">&quot;type&quot;</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="s">&quot;md5&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Now, if I had a much larger object, say the one below, I&#8217;d save it to a file first:</p>
+<div class="highlight-python"><pre>curl http://api.metagenomics.anl.gov/1/m5nr/taxonomy?version=1 &gt; taxonomy_download.json</pre>
+</div>
+<p>Then, I would parse through the file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">import</span> <span class="nn">ijson</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">objects</span> <span class="o">=</span> <span class="n">ijson</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&quot;domain&quot;</span><span class="p">):</span>
+            <span class="k">print</span> <span class="n">x</span><span class="p">[</span><span class="s">&quot;domain&quot;</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="s">&quot;ncbi_tax_id&quot;</span><span class="p">]</span>
+            <span class="c">#note that not all tax_id&#39;s have an associated domain</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="exercise-linking-mg-rast-to-taxonomy">
+<h2>Exercise - linking MG-RAST to taxonomy<a class="headerlink" href="#exercise-linking-mg-rast-to-taxonomy" title="Permalink to this headline">¶</a></h2>
+<p>One of the most aggravating searches in MG-RAST is linking a md5sum to its taxonomy.  But...once you do it, you can give yourself a huge pat on the back for understanding how to interact with this API.</p>
+<p>Can you figure out how to do it?  For a given md5sum, identify its taxonomic lineage.  What if you had to automate this for several md5sums?</p>
+<ol class="arabic simple">
+<li>Download the BLAT tabular output for mgm4447943.3 (Hint: the file type is 650.2)</li>
+<li>Identify the best hits for the first 50 reads. (Hint: remember your BLAST tutorial?)</li>
+<li>Find the taxonomy id associated with the first 50 reads using the API call.  (Hint: you&#8217;re going to want to write your own script for interacting with the following string &#8220;<a class="reference external" href="http://api.metagenomics.anl.gov//m5nr/md5/">http://api.metagenomics.anl.gov//m5nr/md5/</a>&#8221; + m5nr + &#8221;?source=GenBank&#8221;)</li>
+<li>Find the taxonomy lineage associated with that taxon ID.</li>
+</ol>
+<p>You can also get taxonomy from NCBI returned in XML format:</p>
+<div class="highlight-python"><pre>http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&amp;id=376637</pre>
+</div>
+<p>Another tool I&#8217;ve used is <a class="reference external" href="http://biopython.org/wiki/Main_Page">Biopython</a>, which has parsers for XML and Genbank files.  Its something I think is worth knowing exists and occasionally I use it, especially for its parsers.  Here&#8217;s a script that I use it for to get taxonomy for a NCBI Accession Number, <a class="reference external" href="https://github.com/adina/Dev/blob/master/efetch-ncbi/get-taxonomy-from-ID.py">here</a> and its also in the repo I&#8217;ve been working with during the workshop.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">MG-RAST and its API</a><ul>
+<li><a class="reference internal" href="#example-usage">Example Usage</a></li>
+<li><a class="reference internal" href="#exercise-download">Exercise - Download</a></li>
+<li><a class="reference internal" href="#working-with-annotations">Working with Annotations</a></li>
+<li><a class="reference internal" href="#a-note-on-json">A note on JSON</a></li>
+<li><a class="reference internal" href="#exercise-linking-mg-rast-to-taxonomy">Exercise - linking MG-RAST to taxonomy</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../ncbi/index.html"
+                        title="previous chapter">So you want to get some sequencing data in NCBI?</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/mgrast/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../ncbi/index.html" title="So you want to get some sequencing data in NCBI?"
+             >previous</a> |</li>
+        <li><a href="../index.html">NGS 2014 Tutorial - Databases 0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adina Howe.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
