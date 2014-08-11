@@ -33,11 +33,11 @@ Remember that you can also access the same commands on the shell with the *curl*
 
 This command outputs a file so you need to save the file to an output:
 
-    curl http://api.metagenomics.anl.gov/1/download/mgm4447943.3?file=350.1 > 350.1.fastq.gz
+    curl "http://api.metagenomics.anl.gov/1/download/mgm4447943.3?file=350.1" > 350.1.fastq.gz
 
 This command returns text (in JSON structure):
 
-    curl http://api.metagenomics.anl.gov/1/download/mgm4447943.3?stage=650
+    curl "http://api.metagenomics.anl.gov/1/download/mgm4447943.3?stage=650"
 
 As a beginner, I often didn't know what to expect and would just try things out -- which I recommend as a good way to learn.
 
@@ -207,4 +207,7 @@ Can you figure out how to do it?  For a given md5sum, identify its taxonomic lin
 You can also get taxonomy from NCBI returned in XML format::
 
     http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=376637
+
+Another tool I've used is `Biopython <http://biopython.org/wiki/Main_Page>`_, which has parsers for XML and Genbank files.  Its something I think is worth knowing exists and occasionally I use it, especially for its parsers.  Here's a script that I use it for to get taxonomy for a NCBI Accession Number, `here <https://github.com/adina/Dev/blob/master/efetch-ncbi/get-taxonomy-from-ID.py>`_ and its also in the repo I've been working with during the workshop.
+
 
