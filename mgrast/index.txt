@@ -200,7 +200,7 @@ Can you figure out how to do it?  For a given md5sum, identify its taxonomic lin
 #. Download the BLAT tabular output for mgm4447943.3 (Hint: the file type is 650.2)  
 #. Identify the best hits for the first 50 reads. (Hint: remember your BLAST tutorial?)
 #. Find the taxonomy id associated with the first 50 reads using the API call.  (Hint: you're going to want to write your own script for interacting with the following string "http://api.metagenomics.anl.gov//m5nr/md5/" + m5nr + "?source=GenBank") 
-#. Find the taxonomy lineage associated with that taxon ID.  
+#. Find the taxonomy lineage associated with that taxon ID (Hint:  See this `script <https://github.com/adina/Dev/blob/master/mgrast-m5nr/mgrast-to-taxonomy.py>`_.  
 
 .. Note::
 
