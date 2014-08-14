@@ -8,7 +8,9 @@ pecifically, to download project specific information.
 First, let's think about how these databases are structured.  I am going to cre\
 ate a database for folks to deposit whole genome sequences.  What kind of infor\
 mation am I going to store in this?  Many of you may be familiar with such a da\
-tabase, hosted by the `NCBI <http://www.ncbi.nlm.nih.gov/>`_.
+tabase, hosted by the `NCBI <http://www.ncbi.nlm.nih.gov/>`_.  The scripts that complement this tutorial can be downloaded with the following::
+
+    git clone https://github.com/adina/scripts-for-ngs2014.git
 
 Let's come up with a list of things we'd like stored in	this database and discuss some	of the challenges involved in database creation, management, and access.
 
@@ -74,7 +76,7 @@ In the shell, you could run the same commands above with the addition of *curl* 
 
 You'll see it fly on to your screen.  Don't panic - you can save it to a file and make it more useful.::
 
-    curl "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=CP000962&rettype=fasta&retmode=text > CP000962.fa"
+    curl "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=CP000962&rettype=fasta&retmode=text" > CP000962.fa
 
 You could now imagine writing a program where you made a list of IDs you want to download and put it in a for loop, *curling* each genome and saving it to a file.  The following is a `script <https://github.com/adina/tutorial-ngs-2014/blob/master/ncbi/fetch-genomes.py>`_.  Thanks to Jordan Fish who gave me the original version of this script before I even knew how and made it easy to use.
 
