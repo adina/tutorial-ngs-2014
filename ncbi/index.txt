@@ -82,13 +82,13 @@ You could now imagine writing a program where you made a list of IDs you want to
 
 To see the documentation for this script::
 
-    python fetch-genomes.py
+    /usr/bin/python fetch-genomes.py
 
 You'll see that you need to provide a list of IDs and a directory where you want to save the downloaded files.
 
 To run the script::
 
-    python fetch-genomes.py interesting-genomes.txt genbank-files
+    /usr/bin/python fetch-genomes.py interesting-genomes.txt genbank-files
 
 .. Note::
     
@@ -137,13 +137,13 @@ Fan Yang (Iowa State University) and I wrote a script to extract 16S rRNA sequen
 
 To run this script on the Genbank file for CP000962::
 
-    python parse-genbank.py genbank-files/CP000962.gbk > genbank-files/CP000962.gbk.16S.fa
+    /usr/bin/python parse-genbank.py genbank-files/CP000962.gbk > genbank-files/CP000962.gbk.16S.fa
 
 The resulting output file contains all 16S rRNA genes from the given Genbank file.
 
 To run this for multiple files, I use a shell for loop::
 
-    for x in genbank-files/*; do python parse-genbank.py $x > $x.16S.fa; done
+    for x in genbank-files/*; do /usr/bin/python parse-genbank.py $x > $x.16S.fa; done
 
 There are multiple ways to get this done -- but this is how I like to do it.
 
