@@ -40,8 +40,8 @@ source_suffix = '.txt'
 master_doc = 'index'
 
 # General information about the project.
-project = u'NGS 2014 Tutorial - Databases'
-copyright = u'2014, Adina Howe'
+project = u'Tutorial - Databases'
+copyright = u'2015, Adina Howe'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
