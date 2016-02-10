@@ -227,8 +227,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'NGS2014Tutorial-Databases', u'NGS 2014 Tutorial - Databases Documentation',
-   u'Adina Howe', 'NGS2014Tutorial-Databases', 'One line description of project.',
+  ('index', 'Tutorial-Databases', u'Tutorial - Databases Documentation',
+   u'Adina Howe', 'Tutorial-Databases', 'One line description of project.',
    'Miscellaneous'),
 ]
 
