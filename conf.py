@@ -213,7 +213,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'ngs2014tutorial-databases', u'NGS 2014 Tutorial - Databases Documentation',
+    ('index', 'tutorial-databases', u'Tutorial - Databases Documentation',
      [u'Adina Howe'], 1)
 ]
 
