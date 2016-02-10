@@ -1,36 +1,117 @@
-================================================
-So you want to get some sequencing data in NCBI?
-================================================
+=================================================
+So you want to start using that big data in NCBI?
+=================================================
 
-This is a set of tutorials for working with the NCBI and MG-RAST databases -- s\
-pecifically, to download project specific information.
+This is a tutorials for working with the data that is available in NCBI.  The learning objectives for this tutorial are as follows:
 
-First, let's think about how these databases are structured.  I am going to cre\
-ate a database for folks to deposit whole genome sequences.  What kind of infor\
-mation am I going to store in this?  Many of you may be familiar with such a da\
-tabase, hosted by the `NCBI <http://www.ncbi.nlm.nih.gov/>`_.  The scripts that complement this tutorial can be downloaded with the following::
+1.  To be able to download specific gene sequences or genomes from NCBI (even with a big list of gene sequences).
+2.  To be able to create use these genes as a database to annotate a sequencing dataset.
+3.  To estimate the number of genes and their corresponding annotations in multiple sequencing datasets.
 
-    git clone https://github.com/adina/scripts-for-ngs2014.git
+You will need to know some things prior to this tutorial:
 
-Let's come up with a list of things we'd like stored in	this database and discuss some	of the challenges involved in database creation, management, and access.
+1.  Familiarity with the structure of NCBI website and their nucleotide and genome databases.
+2.  Ability to navigate in the unix shell.
+3.  Ability to execute programs in the shell.
+4.  Access and login to an Amazon EC2 instance or similar ubuntu-based server
 
-The challenge
--------------
-So, you've been	given a	list of	genomes	and been asked to create a phylogenetic tree of these genomes.	 How big would this list be before you thought about hiring an undergraduate to download sequences?
+The key challenge that we will work through...or your mission, if you choose to accept it, is to identify nitrogen fixation genes found in sequencing DNA from soils.
 
-Say the list is only 3 genomes::
+You have been delivered three dogma-changing metagenomes (sequencing datasets) originating from three different Iowa crop soils (corn, soybean, and prairie).  You are interesting in identifying nitrogen fixation genes that are associated with native bacteria in these soils.  Nitrogen fixation is a natural process performed by bacteria that converts nitrogen in the atmosphere into a form that is usable for plants.  If we can optimize natural nitrogen fixation, our hope is to reduce nitrogen fertilizer inputs that may contribute to the eutrophication of downstream waters (e.g., dead zones in the Gulf of Mexico).
 
-   CP000962
-   CP000967
-   CP000975
-   
-The following are some ways with which I've used to grab genome sequences:
+* Task 1.  Get the metagenome datasets and scripts related to this tutorial.
+
+All the tutorial materials are contained on a Github repository.  The reason for using Github is that this material can be updated by me and grabbed by you lucky folk seamlessly with just a couple commands.  If you are interested in learning more about Git, see these [tutorials]().
+
+    git clone https://github.com/adina/bodega-howe-ncbi.git
+
+This command will make a directory (or folder for those more Finder/Explorer inclined) named "bodega-howe-ncbi" in the location where it was run.  Within that directory, there will be two directories containing "data" and "scripts".  You can see this by navigating (hint:  cd) to the "bodega-howe-ncbi" directory and typing:
+
+    ls -lah
+
+* Task 2.  Navigate to the data directory and identify the number of sequences in each file.  Hint:  To find specific characters in a file, you can use [grep](http://www.gnu.org/software/grep/manual/html_node/Usage.html).  For example, to find all instances of AGTC in the corn.fa file, we could::
+
+    grep AGTC corn.fa
+
+To find sequences, we know that each sequence will start with a special character, ">".  This character in the shell, remember, is a bit special.  So to find it as a symbol in the text, we're going to put a '^' right before it in quotes::
+
+    grep ^">" corn.fa
+
+Now, to count, you'll remember we can use the command "wc", with a pipe...So you're command will look something like this::
+
+    grep ^">" corn.fa | wc
+
+Or...if you want to do this quicky::
+
+    for x in *fa; do echo $x; grep ^">" $x | wc; done
+
+To identify nitrogen fixation genes, you've been tasked to build a database of all previously observed known nitrogen fixation genes (nifH).  To build this database, you have been reading literature for about two weeks and come up with a list of about 30 genes:
+
+gi|985477984|emb|LN997366.1|
+gi|985477986|emb|LN997367.1|
+gi|985477988|emb|LN997368.1|
+gi|985477990|emb|LN997369.1|
+gi|985477992|emb|LN997370.1|
+gi|985477994|emb|LN997371.1|
+gi|985477996|emb|LN997372.1|
+gi|985477998|emb|LN997373.1|
+gi|985478000|emb|LN997374.1|
+gi|985478002|emb|LN997375.1|
+gi|985478004|emb|LN997376.1|
+gi|985478006|emb|LN997377.1|
+gi|985478008|emb|LN997378.1|
+gi|985478010|emb|LN997379.1|
+gi|985478012|emb|LN997380.1|
+gi|985478014|emb|LN997381.1|
+gi|985478016|emb|LN997382.1|
+gi|985478018|emb|LN997383.1|
+gi|985478020|emb|LN997384.1|
+gi|985478022|emb|LN997385.1|
+gi|985478024|emb|LN997386.1|
+gi|985478026|emb|LN997387.1|
+gi|985478028|emb|LN997388.1|
+gi|985478030|emb|LN997389.1|
+gi|985478032|emb|LN997390.1|
+gi|985478034|emb|LN997391.1|
+gi|985478036|emb|LN997392.1|
+gi|985478038|emb|LN997393.1|
+gi|38679|emb|X51500.1|
+gi|470075|emb|Z31716.1|
+
+You'll also see this list in a file in the data directory (hint:  use cat).
+
+Task 3.  Check out the file containing these gene IDs.
+
+You have a sinking feeling like this isn't really leveraging the big data biology that everyone says sequencing technologies have provided.  You've decided to check out NCBI for its contents.
+
+Task 4.  Go to the NCBI webpage and identify an estimate of total nifH genes and download a list of their accession numbers.
+
+You'll want to navigate in a web-browser to the [NCBI webpage](http://www.ncbi.nlm.nih.gov/).  You'll see in the search query box that you can search a number of databases.  Here, we want to look at the nucleotide database and query something along the lines of nifH or nitrogen fixation.
+
+When I did this, there were nearly 180,000 genes that were hit by this query.  You will want to look for the "Send To" link at the upper right of the page (put on a magnifying glass!), and download the GI list for this query.
+
+Task 5.  Find that file on your computer and give it a peek.  If you're feeling up for it, transfer it to your EC2 instance (hint:  scp).
+
+To make this tutorial not-as-painful to complete in a reasonable amount of time, I've also made a list of 300 nifH genes from NCBI and put them in a file '300-nifh-genes.txt' in the data directory.
+
+Task 6.  Take a look at this file.  Prove to yourself that it contains 300 genes (Hint:  wc)
+
+*Protip digression:
+
+Note that some of these hits, I am sure, are likely not nifH.  Typically, I would do some clean up of these genes to filter out any annotation that did not contain "nifH".  In case you're interested, this script is in the scripts directory and is called "clean-up.py".  You are welcome to play with it.
+
+Optional::
+    python clean-up.py <fasta-file-uncleaned> > <fasta-file-cleaned>
+
+Task 7.  Download these genes (by learning about the NCBI API below)
+
+There are several ways to do this:
 
 #. Go to the web portal and look up each FASTA
 #. Go to the `FTP site <ftp://ftp.ncbi.nlm.nih.gov/refseq/>`_, find each genome, and download manually
 #. Use the NCBI Web Services API to download the data
 
-Among these, I'm going to assume many of you are familiar with the first two.  This tutorial then is going to focus on using APIs.  
+Among these, I'm going to assume many of you are familiar with the first two.  This tutorial then is going to focus on using APIs.
 
 What is an API and how does it relate to NCBI?
 ----------------------------------------------
@@ -41,13 +122,15 @@ The NCBI has a whole toolkit which they call *Entrez Programming Utilities* or *
 
 To do this, you're going to be using one tool in *eutils*, called *efetch*.  There is a whole chapter devoted to `efetch <http://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.EFetch>`_ -- when I first started doing this kind of work, this documentation always broke my heart.  Its easier for me to just show you how to use it.
 
-Open a web browser, and try the following URL to download the nucleotide genome for CB00962::
+Task 8.  Open a web browser, and check out what NCBI knows about this gene.  Check it out `here <http://www.ncbi.nlm.nih.gov/nuccore/X51500.1>`_.
 
-    http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=CP000962&rettype=fasta&retmode=text
+Task 9.  Download the gene with eutils commands in your web-browser and take a look at the file.
 
-Note that the NCBI knows a lot about this genome.  Check it out `here <http://www.ncbi.nlm.nih.gov/nuccore/CP000962>`_.
+Try the following URL to download the nucleotide genome for gene X51500.1::
 
-If I want to access other kinds of data associated with this genome, I would try the following command::
+    http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=X51500.1&rettype=fasta&retmode=text
+
+Task 10.  Try downloading the GenBank file instead::
 
    http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=CP000962&rettype=gb&retmode=text
 
@@ -55,28 +138,29 @@ Do you notice the difference in these two commands?  Let's breakdown the command
 
 #.  <http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?>  This is command telling your computer program (or your browser) to talk to the NCBI API tool efetch.
 #.  <db=nuccore>  This command tells the NCBI API that you'd like it to look in this particular database for some data.  Other databases that the NCBI has available can be found `here <http://eutils.ncbi.nlm.nih.gov/entrez/eutils/einfo.fcgi>`_.
-#.  <id=CP000962>  This command tells the NCBI API efetch the ID of the genome you want to find.
-#.  <rettype=gb&retmode=text>  These two commands tells the NCBI how the data is returned.  You'll note that in the two examples above this command varied slightly.  In the first, we asked for only the FASTA sequence, while in the second, we asked for the Genbank file.  Here's some elusive documentation on where to find these `"return" objects <http://www.ncbi.nlm.nih.gov/books/NBK25499/table/chapter4.chapter4_table1/?report=objectonly>`_.  
-
+#.  <id=X51500.1>  This command tells the NCBI API efetch the ID of the gene/genome you want to find.
+#.  <rettype=gb&retmode=text>  These two commands tells the NCBI how the data is returned.  You'll note that in the two examples above this command varied slightly.  In the first, we asked for only the FASTA sequence, while in the second, we asked for the Genbank file.  Here's some elusive documentation on where to find these `"return" objects <http://www.ncbi.nlm.nih.gov/books/NBK25499/table/chapter4.T._valid_values_of__retmode_and/?report=objectonly>`_.
 
 Also, a useful command is also <version=1>.  There are different versions of sequences and some times that is useful.  For reproducibility, I try to specify versions in my queries, see these `comments <http://www.ncbi.nlm.nih.gov/Class/MLACourse/Modules/Format/exercises/qa_accession_vs_gi.html>`_.
 
-.. Note:: 
+.. Note::
 
-   Notice the "&" that comes between each of these little commands, it is necessary and important.   
+   Notice the "&" that comes between each of these little commands, it is necessary and important.
 
 Automating with an API
 ----------------------
 
-Ok, let's think of automating this sort of query.  
+Ok, let's think of automating this sort of query.  So...we're moving from your lil laptop to your jumbo EC2 instance now.
+
+Task 11. Download a gene sequence on the command line.
 
 In the shell, you could run the same commands above with the addition of *curl* on your EC2 instance::
 
-    curl "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=CP000962&rettype=fasta&retmode=text"
+    curl "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=X51500.1&rettype=fasta&retmode=text"
 
 You'll see it fly on to your screen.  Don't panic - you can save it to a file and make it more useful.::
 
-    curl "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=CP000962&rettype=fasta&retmode=text" > CP000962.fa
+    curl "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=X51500.1&rettype=fasta&retmode=text" > X51500.1.fa
 
 You could now imagine writing a program where you made a list of IDs you want to download and put it in a for loop, *curling* each genome and saving it to a file.  The following is a `script <https://github.com/adina/tutorial-ngs-2014/blob/master/ncbi/fetch-genomes.py>`_.  Thanks to Jordan Fish who gave me the original version of this script before I even knew how and made it easy to use.
 
@@ -86,19 +170,22 @@ To see the documentation for this script::
 
 You'll see that you need to provide a list of IDs and a directory where you want to save the downloaded files.
 
-To run the script::
+Task 12.  Run this script::
 
-    /usr/bin/python fetch-genomes.py interesting-genomes.txt genbank-files
+    /usr/bin/python fetch-genomes-fasta.py 300-nifh-genes.txt nifh-database-fastas
 
 .. Note::
-    
-    You may want to run this on just a few of these IDs to begin with.  You can create a smaller list using the *head* command with the -n parameter in the shell.  For example, head -n 3 interesting-genomes.txt > 3genomes.txt.
- 
-Let's take a look inside this script.  The meat of this script uses the following code::
+
+    You may want to run this on just a few of these IDs to begin with.  You can create a smaller list using the *head* command with the -n parameter in the shell.  For example, head -n 3 300-nifh-genes.txt > 3genes.txt.
+
+Task 13.  Let's take a look inside this script.  The meat of this script uses the following code::
 
     url_template = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&id=%s&rettype=gb&retmode=text"
 
 You'll see that the *id* here is a string character which is obtained from list of IDs contained in a separate file.  The rest of the script manages where the files are being placed and what they are named.  It also prints some output to the screen so you know its running.
+
+Task 14.  Take a break.
+
 
 Exercise - Downloading data
 ---------------------------
@@ -124,16 +211,16 @@ The structure of the Genbank file allows you to identify 16S genes.  For example
                      /product="16S ribosomal RNA"
                      /db_xref="Pathema:CLK_3816"
 
-You could write code to find text like 'rRNA' and '/product="16S ribosomal RNA"', grab the location of the gene, and then go to the FASTA file and grab these sequences.  I've done that before.  
+You could write code to find text like 'rRNA' and '/product="16S ribosomal RNA"', grab the location of the gene, and then go to the FASTA file and grab these sequences.  I've done that before.
 
-You could also use existing packages to parse Genbank files.  I have the most experience with BioPython.  To begin with, let's just use BioPython so you can get to using existing scripts without writing scripts.  
+You could also use existing packages to parse Genbank files.  I have the most experience with BioPython.  To begin with, let's just use BioPython so you can get to using existing scripts without writing scripts.
 
 
 First, we'll have to install BioPython on your instance and they've made that pretty easy::
 
     apt-get install python-biopython
 
-Fan Yang (Iowa State University) and I wrote a script to extract 16S rRNA sequences from Genbank files, `here <https://github.com/adina/tutorial-ngs-2014/blob/master/ncbi/parse-genbank.py>`_.  It basically searches for text strings in the Genbank structure that is appropriate for these particular genes.  You can read more about BioPython `here <http://biopython.org/DIST/docs/tutorial/Tutorial.html>`_ and its Genbank parser `here <http://biopython.org/DIST/docs/api/Bio.GenBank-module.html>`_.  
+Fan Yang (Iowa State University) and I wrote a script to extract 16S rRNA sequences from Genbank files, `here <https://github.com/adina/tutorial-ngs-2014/blob/master/ncbi/parse-genbank.py>`_.  It basically searches for text strings in the Genbank structure that is appropriate for these particular genes.  You can read more about BioPython `here <http://biopython.org/DIST/docs/tutorial/Tutorial.html>`_ and its Genbank parser `here <http://biopython.org/DIST/docs/api/Bio.GenBank-module.html>`_.
 
 To run this script on the Genbank file for CP000962::
 
@@ -148,10 +235,3 @@ To run this for multiple files, I use a shell for loop::
 There are multiple ways to get this done -- but this is how I like to do it.
 
 And there you have it, you can now pretty much automatically grab 16S rRNA genes from any number of genomes in NCBI databases.
-
-
-
-
-
-
-
