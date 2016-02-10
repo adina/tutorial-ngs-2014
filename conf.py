@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# NGS 2014 Tutorial - Databases documentation build configuration file, created by
+# Tutorial - Databases documentation build configuration file, created by
 # sphinx-quickstart on Tue Aug  5 15:35:10 2014.
 #
 # This file is execfile()d with the current directory set to its containing dir.
