@@ -40,8 +40,8 @@ source_suffix = '.txt'
 master_doc = 'index'
 
 # General information about the project.
-project = u'NGS 2014 Tutorial - Databases'
-copyright = u'2014, Adina Howe'
+project = u'Tutorial - Databases'
+copyright = u'2015, Adina Howe'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -213,7 +213,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'ngs2014tutorial-databases', u'NGS 2014 Tutorial - Databases Documentation',
+    ('index', 'tutorial-databases', u'Tutorial - Databases Documentation',
      [u'Adina Howe'], 1)
 ]
 
