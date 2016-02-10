@@ -1,2 +1,2 @@
-tutorial-ngs-2014
-=================
+Tutorial documentation for various teaching for bioinformatics lessons.
+
