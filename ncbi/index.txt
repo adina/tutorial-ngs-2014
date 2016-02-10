@@ -2,6 +2,8 @@
 So you want to start using that big data in NCBI?
 =================================================
 
+Learning objectives
+-------------------
 This is a tutorials for working with the data that is available in NCBI.  The learning objectives for this tutorial are as follows:
 
 1.  To be able to download specific gene sequences or genomes from NCBI (even with a big list of gene sequences).
@@ -19,17 +21,25 @@ The key challenge that we will work through...or your mission, if you choose to 
 
 You have been delivered three dogma-changing metagenomes (sequencing datasets) originating from three different Iowa crop soils (corn, soybean, and prairie).  You are interesting in identifying nitrogen fixation genes that are associated with native bacteria in these soils.  Nitrogen fixation is a natural process performed by bacteria that converts nitrogen in the atmosphere into a form that is usable for plants.  If we can optimize natural nitrogen fixation, our hope is to reduce nitrogen fertilizer inputs that may contribute to the eutrophication of downstream waters (e.g., dead zones in the Gulf of Mexico).
 
-* Task 1.  Get the metagenome datasets and scripts related to this tutorial.
+================
+Getting the Data
+================
 
-All the tutorial materials are contained on a Github repository.  The reason for using Github is that this material can be updated by me and grabbed by you lucky folk seamlessly with just a couple commands.  If you are interested in learning more about Git, see these [tutorials]().
+Task 1
+------
+Get the metagenome datasets and scripts related to this tutorial.
+
+All the tutorial materials are contained on a Github repository.  The reason for using Github is that this material can be updated by me and grabbed by you lucky folk seamlessly with just a couple commands.  If you are interested in learning more about Git, see these [tutorials]()::
 
     git clone https://github.com/adina/bodega-howe-ncbi.git
 
-This command will make a directory (or folder for those more Finder/Explorer inclined) named "bodega-howe-ncbi" in the location where it was run.  Within that directory, there will be two directories containing "data" and "scripts".  You can see this by navigating (hint:  cd) to the "bodega-howe-ncbi" directory and typing:
+This command will make a directory (or folder for those more Finder/Explorer inclined) named "bodega-howe-ncbi" in the location where it was run.  Within that directory, there will be two directories containing "data" and "scripts".  You can see this by navigating (hint:  cd) to the "bodega-howe-ncbi" directory and typing::
 
     ls -lah
 
-* Task 2.  Navigate to the data directory and identify the number of sequences in each file.  Hint:  To find specific characters in a file, you can use [grep](http://www.gnu.org/software/grep/manual/html_node/Usage.html).  For example, to find all instances of AGTC in the corn.fa file, we could::
+Task 2
+------
+Navigate to the data directory and identify the number of sequences in each file.  Hint:  To find specific characters in a file, you can use [grep](http://www.gnu.org/software/grep/manual/html_node/Usage.html).  For example, to find all instances of AGTC in the corn.fa file, we could::
 
     grep AGTC corn.fa
 
@@ -51,59 +61,44 @@ gi|985477984|emb|LN997366.1|
 gi|985477986|emb|LN997367.1|
 gi|985477988|emb|LN997368.1|
 gi|985477990|emb|LN997369.1|
-gi|985477992|emb|LN997370.1|
-gi|985477994|emb|LN997371.1|
-gi|985477996|emb|LN997372.1|
-gi|985477998|emb|LN997373.1|
-gi|985478000|emb|LN997374.1|
-gi|985478002|emb|LN997375.1|
-gi|985478004|emb|LN997376.1|
-gi|985478006|emb|LN997377.1|
-gi|985478008|emb|LN997378.1|
-gi|985478010|emb|LN997379.1|
-gi|985478012|emb|LN997380.1|
-gi|985478014|emb|LN997381.1|
-gi|985478016|emb|LN997382.1|
-gi|985478018|emb|LN997383.1|
-gi|985478020|emb|LN997384.1|
-gi|985478022|emb|LN997385.1|
-gi|985478024|emb|LN997386.1|
-gi|985478026|emb|LN997387.1|
-gi|985478028|emb|LN997388.1|
-gi|985478030|emb|LN997389.1|
-gi|985478032|emb|LN997390.1|
-gi|985478034|emb|LN997391.1|
-gi|985478036|emb|LN997392.1|
-gi|985478038|emb|LN997393.1|
+...
 gi|38679|emb|X51500.1|
 gi|470075|emb|Z31716.1|
 
 You'll also see this list in a file in the data directory (hint:  use cat).
 
-Task 3.  Check out the file containing these gene IDs.
+Task 3
+------
+Check out the file containing these gene IDs.
 
 You have a sinking feeling like this isn't really leveraging the big data biology that everyone says sequencing technologies have provided.  You've decided to check out NCBI for its contents.
 
-Task 4.  Go to the NCBI webpage and identify an estimate of total nifH genes and download a list of their accession numbers.
+Task 4
+------
+Go to the NCBI webpage and identify an estimate of total nifH genes and download a list of their accession numbers.
 
-You'll want to navigate in a web-browser to the [NCBI webpage](http://www.ncbi.nlm.nih.gov/).  You'll see in the search query box that you can search a number of databases.  Here, we want to look at the nucleotide database and query something along the lines of nifH or nitrogen fixation.
+You'll want to navigate in a web-browser to the http://www.ncbi.nlm.nih.gov/.  You'll see in the search query box that you can search a number of databases.  Here, we want to look at the nucleotide database and query something along the lines of nifH or nitrogen fixation.
 
 When I did this, there were nearly 180,000 genes that were hit by this query.  You will want to look for the "Send To" link at the upper right of the page (put on a magnifying glass!), and download the GI list for this query.
 
-Task 5.  Find that file on your computer and give it a peek.  If you're feeling up for it, transfer it to your EC2 instance (hint:  scp).
+Task 5
+------
+Find that file on your computer and give it a peek.  If you're feeling up for it, transfer it to your EC2 instance (hint:  scp).
 
 To make this tutorial not-as-painful to complete in a reasonable amount of time, I've also made a list of 300 nifH genes from NCBI and put them in a file '300-nifh-genes.txt' in the data directory.
 
-Task 6.  Take a look at this file.  Prove to yourself that it contains 300 genes (Hint:  wc)
+Task 6
+------
+Take a look at this file.  Prove to yourself that it contains 300 genes (Hint:  wc)
 
-*Protip digression:
+.. Note::
 
-Note that some of these hits, I am sure, are likely not nifH.  Typically, I would do some clean up of these genes to filter out any annotation that did not contain "nifH".  In case you're interested, this script is in the scripts directory and is called "clean-up.py".  You are welcome to play with it.
+Some of these hits, I am sure, are likely not nifH.  Typically, I would do some clean up of these genes to filter out any annotation that did not contain "nifH".  In case you're interested, this script is in the scripts directory and is called "clean-up.py".  You are welcome to play with it.  Here's the command:  python clean-up.py <fasta-file-uncleaned> > <fasta-file-cleaned>
 
-Optional::
-    python clean-up.py <fasta-file-uncleaned> > <fasta-file-cleaned>
+Task 7
+------
 
-Task 7.  Download these genes (by learning about the NCBI API below)
+Download these genes (by learning about the NCBI API below)
 
 There are several ways to do this:
 
@@ -113,8 +108,9 @@ There are several ways to do this:
 
 Among these, I'm going to assume many of you are familiar with the first two.  This tutorial then is going to focus on using APIs.
 
-What is an API and how does it relate to NCBI?
-----------------------------------------------
+================================
+Scaling "Getting the Data" On Up
+================================
 
 Here's some `answers <http://stackoverflow.com/questions/7440379/what-exactly-is-the-meaning-of-an-api>`_, among which my favorite is "an interface through which you access someone else's code or through which someone else's code accesses yours -- in effect the public methods and properties."
 
@@ -122,15 +118,24 @@ The NCBI has a whole toolkit which they call *Entrez Programming Utilities* or *
 
 To do this, you're going to be using one tool in *eutils*, called *efetch*.  There is a whole chapter devoted to `efetch <http://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.EFetch>`_ -- when I first started doing this kind of work, this documentation always broke my heart.  Its easier for me to just show you how to use it.
 
-Task 8.  Open a web browser, and check out what NCBI knows about this gene.  Check it out `here <http://www.ncbi.nlm.nih.gov/nuccore/X51500.1>`_.
+Task 8
+------
 
-Task 9.  Download the gene with eutils commands in your web-browser and take a look at the file.
+Open a web browser, and check out what NCBI knows about this gene.  Check it out `here <http://www.ncbi.nlm.nih.gov/nuccore/X51500.1>`_.
+
+Task 9
+------
+
+Download the gene with eutils commands in your web-browser and take a look at the file.
 
 Try the following URL to download the nucleotide genome for gene X51500.1::
 
     http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=X51500.1&rettype=fasta&retmode=text
 
-Task 10.  Try downloading the GenBank file instead::
+Task 10
+-------
+
+Try downloading the GenBank file instead::
 
    http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=CP000962&rettype=gb&retmode=text
 
@@ -152,7 +157,9 @@ Automating with an API
 
 Ok, let's think of automating this sort of query.  So...we're moving from your lil laptop to your jumbo EC2 instance now.
 
-Task 11. Download a gene sequence on the command line.
+Task 11
+-------
+Download a gene sequence on the command line.
 
 In the shell, you could run the same commands above with the addition of *curl* on your EC2 instance::
 
@@ -170,7 +177,10 @@ To see the documentation for this script::
 
 You'll see that you need to provide a list of IDs and a directory where you want to save the downloaded files.
 
-Task 12.  Run this script::
+Task 12
+-------
+
+Run this script::
 
     /usr/bin/python fetch-genomes-fasta.py 300-nifh-genes.txt nifh-database-fastas
 
@@ -178,13 +188,18 @@ Task 12.  Run this script::
 
     You may want to run this on just a few of these IDs to begin with.  You can create a smaller list using the *head* command with the -n parameter in the shell.  For example, head -n 3 300-nifh-genes.txt > 3genes.txt.
 
-Task 13.  Let's take a look inside this script.  The meat of this script uses the following code::
+Task 13
+-------
+
+Let's take a look inside this script.  The meat of this script uses the following code::
 
     url_template = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&id=%s&rettype=gb&retmode=text"
 
 You'll see that the *id* here is a string character which is obtained from list of IDs contained in a separate file.  The rest of the script manages where the files are being placed and what they are named.  It also prints some output to the screen so you know its running.
 
-Task 14.  Take a break.
+Task 14
+-------
+Take a break.
 
 
 Exercise - Downloading data
