@@ -59,13 +59,17 @@ Or...if you want to do this quicky::
 To identify nitrogen fixation genes, you've been tasked to build a database of all previously observed known nitrogen fixation genes (nifH).  To build this database, you have been reading literature for about two weeks and come up with a list of about 30 genes:
 
 gi|985477984|emb|LN997366.1|
+
 gi|985477986|emb|LN997367.1|
+
 gi|985477988|emb|LN997368.1|
+
 gi|985477990|emb|LN997369.1|
 
 ...
 
 gi|38679|emb|X51500.1|
+
 gi|470075|emb|Z31716.1|
 
 You'll also see this list in a file in the data directory (hint:  use cat).
@@ -96,7 +100,7 @@ Take a look at this file.  Prove to yourself that it contains 300 genes (Hint:  
 
 .. Note::
 
-Some of these hits, I am sure, are likely not nifH.  Typically, I would do some clean up of these genes to filter out any annotation that did not contain "nifH".  In case you're interested, this script is in the scripts directory and is called "clean-up.py".  You are welcome to play with it.  Here's the command:  python clean-up.py <fasta-file-uncleaned> > <fasta-file-cleaned>
+    Some of these hits, I am sure, are likely not nifH.  Typically, I would do some clean up of these genes to filter out any annotation that did not contain "nifH".  In case you're interested, this script is in the scripts directory and is called "clean-up.py".  You are welcome to play with it.  Here's the command:  python clean-up.py <fasta-file-uncleaned> > <fasta-file-cleaned>
 
 Task 7
 ------
@@ -216,7 +220,7 @@ Perform an alignment (with BLAST) of your metagenomes against your new database.
 
 .. Note::
 
-`BLAST refresher tutorial <http://angus.readthedocs.org/en/2014/running-command-line-blast.html>`_.
+    `BLAST initiation or refresher tutorial <http://angus.readthedocs.org/en/2014/running-command-line-blast.html>`_.
 
 =======================
 Next steps, what's next
@@ -268,7 +272,7 @@ Transfer the annotated file over to your laptop and open it in Excel.
 Conclusion
 ==========
 
-You now have the foundation for having some sequencing data that you need to compare to any database.  You should be able to generate the information needed to perform statistical analyses.  Note, that you can do this for specific genes and also genomes...!    Now, go forth and conquer! 
+You now have the foundation for having some sequencing data that you need to compare to any database.  You should be able to generate the information needed to perform statistical analyses.  Note, that you can do this for specific genes and also genomes...!    Now, go forth and conquer!
 
 
 ===============================
