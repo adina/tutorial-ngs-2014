@@ -164,7 +164,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'NGS2014Tutorial-Databasesdoc'
+htmlhelp_basename = 'Tutorial-Databasesdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -183,7 +183,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'NGS2014Tutorial-Databases.tex', u'NGS 2014 Tutorial - Databases Documentation',
+  ('index', 'Tutorial-Databases.tex', u'Tutorial - Databases Documentation',
    u'Adina Howe', 'manual'),
 ]
 
