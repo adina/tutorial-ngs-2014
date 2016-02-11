@@ -22,6 +22,28 @@ The key challenge that we will work through...or your mission, if you choose to 
 
 You have been delivered three dogma-changing metagenomes (sequencing datasets) originating from three different Iowa crop soils (corn, soybean, and prairie).  You are interesting in identifying nitrogen fixation genes that are associated with native bacteria in these soils.  Nitrogen fixation is a natural process performed by bacteria that converts nitrogen in the atmosphere into a form that is usable for plants.  If we can optimize natural nitrogen fixation, our hope is to reduce nitrogen fertilizer inputs that may contribute to the eutrophication of downstream waters (e.g., dead zones in the Gulf of Mexico).
 
+==========
+Your tools
+==========
+
+Get your EC2 instance going - you need an Ubuntu 14.0 based instance (64-bit) with at least 4 cores.
+Then install the software::
+
+    apt-get update
+
+Then...::
+
+    cd /root
+    apt-get -y install gcc git screen curl make python-pip
+
+And finally...::
+
+    pip install screed
+    curl -O ftp://ftp.ncbi.nih.gov/blast/executables/release/2.2.26/blast-2.2.26-x64-linux.tar.gz
+    tar xzf blast-2.2.26-x64-linux.tar.gz
+    cp blast-2.2.26/bin/* /usr/local/bin
+    cd /home/ubuntu
+
 ================
 Getting the Data
 ================
@@ -92,7 +114,7 @@ Task 5
 ------
 Find that file on your computer and give it a peek.  If you're feeling up for it, transfer it to your EC2 instance (hint:  scp).
 
-To make this tutorial not-as-painful to complete in a reasonable amount of time, I've also made a list of 300 nifH genes from NCBI and put them in a file '300-nifh-genes.txt' in the data directory.
+To make this tutorial not-as-painful to complete in a reasonable amount of time, I've also made a list of 300 nifH genes from NCBI and put them in a file '300-nifh-genes.txt' in the data directory.  I would highly suggest you use this gene to build your database going forward in this tutorial.
 
 Task 6
 ------
@@ -102,12 +124,14 @@ Take a look at this file.  Prove to yourself that it contains 300 genes (Hint:  
 
     Some of these hits, I am sure, are likely not nifH.  Typically, I would do some clean up of these genes to filter out any annotation that did not contain "nifH".  In case you're interested, this script is in the scripts directory and is called "clean-up.py".  You are welcome to play with it.  Here's the command:  python clean-up.py <fasta-file-uncleaned> > <fasta-file-cleaned>
 
+
+Now, we are going to learn how to download these genes (by learning about the NCBI API below)
+
 Task 7
 ------
+Think about how you would download this data if you didn't have this tutorial.
 
-Download these genes (by learning about the NCBI API below)
-
-There are several ways to do this:
+You may have thought about some of the following:
 
 #. Go to the web portal and look up each FASTA
 #. Go to the `FTP site <ftp://ftp.ncbi.nlm.nih.gov/refseq/>`_, find each genome, and download manually
@@ -135,14 +159,14 @@ Task 9
 
 Download the gene with eutils commands in your web-browser and take a look at the file.
 
-Try the following URL to download the nucleotide genome for gene X51500.1::
+On your web-browser, paste the following URL to download the nucleotide genome for gene X51500.1::
 
     http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=X51500.1&rettype=fasta&retmode=text
 
 Task 10
 -------
 
-Try downloading the GenBank file instead::
+Try downloading the GenBank file instead by pasting this onto your web-browser::
 
    http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=CP000962&rettype=gb&retmode=text
 
@@ -166,37 +190,44 @@ Task 11
 -------
 Download a gene sequence on the command line.
 
-In the shell, you could run the same commands above with the addition of *curl* on your EC2 instance::
+Going back onto your instance, in the shell, you could run the same commands above with the addition of *curl* on your EC2 instance::
 
     curl "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=X51500.1&rettype=fasta&retmode=text"
 
-You'll see it fly on to your screen.  Don't panic - you can save it to a file and make it more useful.::
+You'll see it fly on to your screen.  Don't panic - you can save it to a file and make it more useful BUT note the path you are in and where you will save this file (as long as you know...that's fine)::
 
     curl "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=X51500.1&rettype=fasta&retmode=text" > X51500.1.fa
 
 You could now imagine writing a program where you made a list of IDs you want to download and put it in a for loop, *curling* each genome and saving it to a file.  The following is a `script <https://github.com/adina/tutorial-ngs-2014/blob/master/ncbi/fetch-genomes.py>`_.  Thanks to Jordan Fish who gave me the original version of this script before I even knew how and made it easy to use.
 
-To see the documentation for this script::
+To see the documentation for this script in the scripts directory::
 
-    /usr/bin/python fetch-genomes.py
+    python fetch-genomes-fasta.py
 
 You'll see that you need to provide a list of IDs and a directory where you want to save the downloaded files.
 
-Task 12
--------
+Task 12a
+--------
 
-Run this script::
+Run this script (note that your paths for the script or data may need to be specified) -- also see note below::
 
-    /usr/bin/python fetch-genomes-fasta.py 300-nifh-genes.txt nifh-database-fastas
+    python scripts/fetch-genomes-fasta.py data/300-nifh-genes.txt data/nifh-database-fastas
+
+Sit back and think of the glory that is happening on your screen right now...
 
 .. Note::
 
-    You may want to run this on just a few of these IDs to begin with.  You can create a smaller list using the *head* command with the -n parameter in the shell.  For example, head -n 3 300-nifh-genes.txt > 3genes.txt.
+    If you are nervous....you may want to run this on just a few of these IDs to begin with.  You can create a smaller list using the *head* command with the -n parameter in the shell.  For example, head -n 3 300-nifh-genes.txt > 3genes.txt.
+
+Task 12b
+--------
+After all the 300 genes are downloaded, you will want to concatenate them into one file (Hint cat and >>), named "all-nifH.fa".
 
 Task 13
 -------
+Look at the script/program content in "fetch-genomes-fasta.py".
 
-Let's take a look inside this script.  The meat of this script uses the following code::
+The meat of this script uses the following code::
 
     url_template = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&id=%s&rettype=gb&retmode=text"
 
@@ -214,13 +245,19 @@ So there are lots of ways to do this and arguably "blasting" is one of the most 
 
 Task 15
 -------
-Perform an alignment (with BLAST) of your metagenomes against your new database.  You should also add your lit search genes (those 30 genes) into your NCBI downloaded genes.  I would suggest something like the following variables::
+Format your nifH database for BLAST and then perform an alignment (with BLAST) of your metagenomes against your new database.  You should also add your lit search genes (those 30 genes) into your NCBI downloaded genes.  I would suggest something like the following variables::
 
     blastall -i <metagenome file> -d <nifh-db> -m 8 -a 8 -p blastn -o <metag.blastnout.m8> -b 1 -e 1e-5
 
+This takes a bit of time...so stretch a bit.  Like all good bioformaticians, you should go do something fun while the computer does all the work.  If you want to see it running, try using the "top" command.
+
 .. Note::
 
-    `BLAST initiation or refresher tutorial <http://angus.readthedocs.org/en/2014/running-command-line-blast.html>`_.
+    `BLAST initiation or refresher tutorial <http://angus.readthedocs.org/en/2014/running-command-line-blast.html>`_.  I have put a cheatsheet of the commands I used in the scripts directory -- if you need another hint.
+
+Task 16
+-------
+Examine your blast outputs.  What do the first few lines contain?  How many hits do you have per metagenome to your database?
 
 =======================
 Next steps, what's next
@@ -238,7 +275,7 @@ You have a list of genes GI IDs and can pull the annotation of the gene from the
 
 Perhaps the most difficult is to get the abundance estimates.  Intuitively, you can think about how to get this out of the BLAST outputs.  I observed Gene X, Y times in dataset I, Z times in dataset II.  Fortunately, I have a script to do this computationally.
 
-Task 16
+Task 17
 -------
 Produce an abundance table of all genes in your 3 metagenomes::
 
@@ -246,17 +283,17 @@ Produce an abundance table of all genes in your 3 metagenomes::
 
 For example::
 
-    python count-up.py *blastnout
+    python scripts/count-up.py  data/*blastnout
 
 This script produces a file, 'summary-count.tsv'.
 
-Task 17
--------
-Take a look at 'summary-count.tsv'.
-
 Task 18
 -------
-Often, I get really excited and need to know what gene is associated with each Gene ID.  I like to pull in my annotations.  Give this a try::
+Take a look at 'summary-count.tsv'.  What's in it?
+
+Task 19
+-------
+Often, I get really excited and need to know what gene is associated with each Gene ID.  I like to pull in my annotations.  Let's add the annotations by giving this a try::
 
     python import-ann.py <blast database fasta file> summary-count.tsv > <output file>
 
@@ -264,7 +301,7 @@ For example::
 
     python import-ann.py nif-genes.fa summary-count.tsv > summary-count-annotated.tsv
 
-Task 19
+Task 20
 -------
 Transfer the annotated file over to your laptop and open it in Excel.
 
@@ -275,9 +312,9 @@ Conclusion
 You now have the foundation for having some sequencing data that you need to compare to any database.  You should be able to generate the information needed to perform statistical analyses.  Note, that you can do this for specific genes and also genomes...!    Now, go forth and conquer!
 
 
-===============================
-Bonus Material on Genbank Files
-===============================
+====================================================
+Bonus Material on Genbank Files and Genome downloads
+====================================================
 
 Try modifying the fetch-genomes-fasta.py script to download just the Genbank file of the genes.
 
