@@ -246,7 +246,7 @@ So there are lots of ways to do this and arguably "blasting" is one of the most 
 
 Task 15
 -------
-Format your nifH database for BLAST and then perform an alignment (with BLAST) of your metagenomes against your new database.  You should also add your lit search genes (those 30 genes) into your NCBI downloaded genes.  I would suggest something like the following variables::
+Format your nifH database for BLAST and then perform an alignment (with BLAST) of your metagenomes against your new database.  You should also add your lit search genes (those 30 genes) into your NCBI downloaded genes if you're up to the challenge -- it takes a couple steps.  I would suggest something like the following variables::
 
     blastall -i <metagenome file> -d <nifh-db> -m 8 -a 8 -p blastn -o <metag.blastnout.m8> -b 1 -e 1e-5
 
