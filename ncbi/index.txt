@@ -29,6 +29,7 @@ Your tools
 Get your EC2 instance going - you need an Ubuntu 14.0 based instance (64-bit) with at least 4 cores.
 Then install the software::
 
+    sudo bash
     apt-get update
 
 Then...::
