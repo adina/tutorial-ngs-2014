@@ -4,7 +4,7 @@ MG-RAST and its API
 
 Just like the NCBI databases, there are many ways you can interact with MG-RAST, and the web interface is possibly the *worst* way.
 
-Another way you could work with MG-RAST is to download the entire database and then write parsers to get what you want out of it.  I've also found this incredibly painful but if you want to do that, you can find its database `here <ftp://ftp.metagenomics.anl.gov/data/M5nr/>`_.     
+Another way you could work with MG-RAST is to download the entire database and then write parsers to get what you want out of it.  I've also found this incredibly painful but if you want to do that, you can find releases of its protein database (called the m5nr) `here <ftp://ftp.metagenomics.anl.gov/data/M5nr/>`_.     
 
 The best way to access MG-RAST data in my experience is to learn to use their API.  MG-RAST has done a decent job publishing `API documentation <http://api.metagenomics.anl.gov/>`_ -- it just takes a bit of practice to understand its structure.  
 
@@ -17,39 +17,45 @@ You read a paper, and the authors reference MG-RAST metagenomes.  You want to do
     :scale: 100%
     :align: center
 
-For example, here is some data from a recent PNAS paper, "Cross-biome metagenomic analyses of soil microbial communities and their functional attributes"
+For example, here is some data from a 2012 PNAS paper by Fierer et al, `Cross-biome metagenomic analyses of soil microbial communities and their functional attributes <http://www.pnas.org/content/109/52/21390.long>`_
 
-If we wanted to download this data with the API, I'd look at the documentation *download*, `here <http://api.metagenomics.anl.gov/api.html#download>`_.  You'll see a couple examples that lists how you would download different stages::
+To download this data with the API, we can start with the documentation for the *download* API call, `here <http://api.metagenomics.anl.gov/api.html#download>`_.  You'll see a couple examples of urls that will start downloads::
 
-    http://api.metagenomics.anl.gov/1/download/mgm4447943.3?file=350.1
+    http://api.metagenomics.anl.gov/download/mgm4447943.3?file=350.1
 
 Or...::
 
-    http://api.metagenomics.anl.gov/1/download/mgm4447943.3?stage=650
+    http://api.metagenomics.anl.gov/download/mgm4447943.3?stage=650
 
-These two commands above download a specific file or show files from a specific stage for the MG-RAST metagenome ID 4447943.3.   You'll notice how they look similar to the NCBI API calls, with a specific structure.  You're also requesting specific data with the query terms given after the ID with this *&* structure.   Try putting these *urls* into your web browser and you can see the results.  
+The two urls above download two of the datafiles for MG-RAST metagenome ID 4447943.3.   You'll notice how they look similar to the NCBI API calls, with a specific structure.  Like NCBI's efectch, the URL encodes parameters to tell the server what data we want, here the id of the dataset and, after the "?",  the number of the download file.  Try putting these *urls* into your web browser and you can see the results.  
 
-Remember that you can also access the same commands on the shell with the *curl* command, but you need to know what kind of output you expect.
+Remember that you can also retrieve these urls at the shell prompt using the *curl* command, but you need to know what kind of output you expect.
 
-This command outputs a file so you need to save the file to an output:
+This command outputs a file so you need to redirect the output to a file using ">" :
 
-    curl "http://api.metagenomics.anl.gov/1/download/mgm4447943.3?file=350.1" > 350.1.fastq.gz
+    curl "http://api.metagenomics.anl.gov/download/mgm4447943.3?file=350.1" > mgm4447943.3.350.1.fastq.gz
 
-This command returns text (in JSON structure):
+This command returns text encoded as a JSON structure.
 
-    curl "http://api.metagenomics.anl.gov/1/download/mgm4447943.3?stage=650"
+    curl "http://api.metagenomics.anl.gov/download/mgm4447943.3?stage=650"
+
+`JSON <https://en.wikipedia.org/wiki/JSON>`_  is a way to encode potentially complica ted data structures using ordinary punctuation. 
 
 As a beginner, I often didn't know what to expect and would just try things out -- which I recommend as a good way to learn.
 
 Even more useful, I think is the following command:
 
-    http://api.metagenomics.anl.gov/1/download/mgm4447943.3
+    http://api.metagenomics.anl.gov/download/mgm4447943.3
+
+.. Note::
+
+If you put this in your browser and see gibberish, then you need a browser plugin that pretty-prints JSON.   Search for "browser JSON viewer" and find one that will work with your browser; suitable tools include JSONView, JSONViewer, JSONformatter, and PrettyJSON.
 
 I like to put this in a web browser because it pretty prints the JSON text output.  This command above gives all the dat that can be obtained from the *download* call for this metagenome.  
 
-A challenge for MG-RAST is that the types of files and the stages aren't that well-documented.  You can get a good guess of what the files and their content from the download page on the web interface, e.g., `here <http://metagenomics.anl.gov/metagenomics.cgi?page=DownloadMetagenome&metagenome=4447943.3>`_.  I can tell you from experience that the most important files for me are as follows:
+The types of data files and the stages are supposed to be documented in the `MG-RAST technical manual <ftp://ftp.metagenomics.anl.gov/manual.pdf>_`.  Clues to the available data files and their content can also be found on the the download page on the web interface, e.g., `here <http://metagenomics.anl.gov/metagenomics.cgi?page=DownloadMetagenome&metagenome=4447943.3>`_.  The most important files for me are as follows:
 
-#. File 050.2 - This is the unfiltered metagenome that was originally uploaded to MG-RAST
+#. File 050.2 - This is the unfiltered sequence data that was originally uploaded to MG-RAST
 #. File 350.2 & 350.3 - These are the protein coding genes (amino acids and nucleotides)
 #. File 440.1 - These are predicted rRNA sequences (I do not recommend using MG-RAST for sensitive rRNA annotation.  It does not use the internal structure of the gene, which other programs appropriately use for classification)
 #. File 550.1 - This file shows clustered sequences which are 90% identical, to reduce the number of sequences that need to be annotated.  Many folks don't even know that this happens within MG-RAST.  
@@ -57,7 +63,7 @@ A challenge for MG-RAST is that the types of files and the stages aren't that we
 
 .. Note:
 
-A few words on the MG-RAST database.  This often confuses people about MG-RAST.  The central part of the MG-RAST database is a set of known protein sequences.  These known sequences are identified by a unique ID (a mix of numbers and letters).  Each known sequence is then related to a known annotation in several databases (e.g., RefSeq, KEGG, SEED, etc.).  In other words, the search of your sequences to the database involves a sequence comparison to a sequences in the M5nr sequence database and these sequences are then linked to "a hub" of annotations in several databases.  If MG-RAST wants to add another database to its capabilities, it would identify the IDs of sequences related to the sequences in the database.  If it existed, the new database annotation would be added to the hub.  Otherwise, a new ID would be created and also a new annotation hub.  As a consequence of all this, the main thing I work with in MG-RAST is these unique IDs.
+A few words on the MG-RAST database.  The central part of the MG-RAST database is a large set of protein sequences (the m5nr database) that is made by combining many public protein databases.  These known sequences are identified by a unique ID (a mix of numbers and letters).  Each known sequence is then connected to other facts by the databases that contain it.  The refseq database has organism name and taxonomy for every protein contained in it; SEED has organism name, function and functional categories for the (smaller) set of proteins it contains.  MG-RAST's pipeline searches for similarity between input sequences and sequences in the m5nr database, and these sequences are then linked to "a hub" of annotations in several databases.  Updates to the database from time to time will add new sequences and can add new information about the sequences as, for instance, unidenfied proteins are assigned a function by the databases MG-RAST uses.  Since the protein identifiers are stable, the main thing I work with in MG-RAST is these unique IDs.
  
 Exercise - Download
 -------------------
@@ -71,7 +77,7 @@ I work mostly with assemblies, as most of my unassembled are less than 200 bp.  
 Working with Annotations
 ------------------------
 
-Honestly, I'm never sure what MG-RAST is doing, so I like to be in charge of those decisions.  Most typically, I am working with 3 types of datasets in any sort of experimental analysis:  
+While MG-RAST is engineered to look up annotations, sometimes you want to look up annotations yourself.  Most typically, I am working with 3 types of datasets in any sort of experimental analysis:  
 
 #. an annotation file linking my sequence to a database (hopefully one with some structure like SEED), 
 #. an abundance file (giving estimates of each of my sequences in my database), and 
@@ -83,11 +89,11 @@ To download these annotation files for specific databases (rather than the uniqu
 
 There are a couple examples on the documentation that are worth trying::
 
-    http://api.metagenomics.anl.gov/1/annotation/sequence/mgm4447943.3?evalue=10&type=organism&source=SwissProt
+    http://api.metagenomics.anl.gov/annotation/sequence/mgm4447943.3?evalue=10&type=organism&source=SwissProt
 
 The above returns a sequence FASTA file with the annotation included in the header of each sequence.::
 
-    http://api.metagenomics.anl.gov/1/annotation/similarity/mgm4447943.3?identity=80&type=function&source=KO
+    http://api.metagenomics.anl.gov/annotation/similarity/mgm4447943.3?identity=80&type=function&source=KO
 
 I use this more often.  The above returns the BLAT results in a tabular format, including the annotations in the last column.  Note that with the *curl* command I can save this to a file and then parse it on my own.
 
@@ -96,11 +102,15 @@ Some comments on the parameters within *type* within these API calls:
 #.  Organism and function are self-explanatory.  
 #.  Ontology is the "structure" of the database, e.g., Subsystems groups SEED sequences into broader functional groups which have their own unique IDS like SS0001. 
 #.  Feature - This is the most basic ID within the database of choice, e.g., in RefSeq, this would be its accession ID.  
-#.  MD5 - this is the unique ID within MG-RAST.
+#.  MD5 - this is the unique ID within MG-RAST's database.
 
 .. Note::
 
-    The other good parameter to be aware of is *version*.  This is important to keep all your analysis consistent.  And also guarantees that you are working with the most recent database.  Also, when you have to go back and repeat the analysis, you'll know what version you used.  The problem is that MG-RAST has almost *no* documentation on versions right now.  You should write them and complain.
+    The other good parameter to be aware of is *version*.  This is important to keep all your analysis consistent.  And also guarantees that you are working with the most recent database.  Also, when you have to go back and repeat the analysis, you'll know what version you used.  MG-RAST lists its database versions with the following API call: 
+
+    http://api.metagenomics.anl.gov/m5nr/source 
+
+Recording the version of the databases allows you to check the databases to see if your favorite organism or functional annotation was included, and is an important step for reproducible research.
 
 If you do want to download aspects of the database for your analysis, you'll want to explore the documentation for `m5nr API calls <http://api.metagenomics.anl.gov/api.html#m5nr>`_.  With these calls, you can download the various databases you interact with and more importantly, the *ontology* structure of databases.
 
@@ -114,11 +124,11 @@ Or in all MG-RAST databases::
 
 If you want to download taxonomy information::
     
-    http://api.metagenomics.anl.gov/1/m5nr/taxonomy?version=1
+    http://api.metagenomics.anl.gov/m5nr/taxonomy?version=1
 
 Or functional information in the SEED::
 
-    http://api.metagenomics.anl.gov/1/m5nr/ontology?source=Subsystems&min_level=function
+    http://api.metagenomics.anl.gov/m5nr/ontology?source=Subsystems&min_level=function
 
 .. Note::
 
@@ -153,7 +163,7 @@ You can test that it was installed::
 
 No error message means you're good to go.
 
-To work with this data structure, I'd look at it first in your pretty JSON-printed webbrowser.
+To work with this data structure, I'd look at it first in your pretty JSON-printed browser.
 
 You'll notice that the data is broken down into a set of nested objects.  In this example, the first level contains objects like the version, url, and data.  If you go into the data object, you'll see nested data about source, function, type, ncbi_tax_id, etc.
 
@@ -173,7 +183,7 @@ I access the specific object "data" in Python with the following code::
 
 Now, if I had a much larger object, say the one below, I'd save it to a file first::
 
-    curl http://api.metagenomics.anl.gov/1/m5nr/taxonomy?version=1 > taxonomy_download.json
+    curl http://api.metagenomics.anl.gov/m5nr/taxonomy?version=1 > taxonomy_download.json
 
 Then, I would parse through the file::
 
@@ -210,4 +220,6 @@ You can also get taxonomy from NCBI returned in XML format::
 
 Another tool I've used is `Biopython <http://biopython.org/wiki/Main_Page>`_, which has parsers for XML and Genbank files.  Its something I think is worth knowing exists and occasionally I use it, especially for its parsers.  Here's a script that I use it for to get taxonomy for a NCBI Accession Number, `here <https://github.com/adina/Dev/blob/master/efetch-ncbi/get-taxonomy-from-ID.py>`_ and its also in the repo I've been working with during the workshop.
 
-
+==Authors==
+Adina Chuang Howe, 2014
+revised Will Trimble, 2017
